@@ -16,17 +16,22 @@ textAreaElement.addEventListener("focus", () => {
 textAreaElement.addEventListener("blur", (e) => {
   let textValue = e.target.value;
   processingText = rearranger(textValue);
-  resultElement.innerHTML = processingText;
+  resultElement.innerText = processingText;
 });
 
 copyButton.addEventListener("click", ()=>{
+  if (processingText) {
   copyContent(processingText);
+  } else {
+    alert("Please type in text before copying");
+    textAreaElement.focus()
+  }
 })
 
 function handleReformation(e) {
 e.preventDefault();
 
-let currentForm =e.target;
+let currentForm = e.target;
 
 let { originalText} = formElement.elements;
 
@@ -34,19 +39,4 @@ let reformatted = rearranger(originalText?.value.trim());
 
 // set the reformatted text
 if (reformatted) resultElement.innerHTML = reformatted;
-
-
-}
-
-function copyContentFromHTML(text) {
-  let caracterDict = {
-    "&lt;br&gt;" : "\b"
-  }
-  let processed = text;
-  
-  for (let caracter of caracterDict) {
-    processed = processed.replace(new RegExp(caracter, "g"), caracterDict[caracter]);
-  }
-
-  copyContent(processed);
 }

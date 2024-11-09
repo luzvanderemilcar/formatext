@@ -7,7 +7,7 @@ export default async function copyContent(text) {
 if (accessGiven) {
   try {
     await navigator.clipboard.writeText(text);
-    alert('Content copied to clipboard');
+    alert('Content copied');
 
   } catch (err) {
     console.error('Failed to copy: ', err);

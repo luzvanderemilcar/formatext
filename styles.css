@@ -1,6 +1,68 @@
+:root {
+  --primary-color: #C100C1;
+  --white-color: white;
+  --light-color: #F5F5F5;
+  --highlight-color: thistle;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "aside"
+    "footer";
+}
+
+h1,h2,h3,h4,h5 {
+  padding-left: 0.5rem;
+}
+
+h2 {
+  background-color: var(--highlight-color, #E0E0E0);
+}
+
+p {
+  margin-inline: 0.75rem;
+}
+
 .container {
-width: 90%;
-margin: 5%;
+  width: 90%;
+  margin: 5%;
+}
+
+.container:first-child {
+  margin-top: 0;
+}
+
+.rounded-border {
+  border-radius: 15px;
+}
+
+header {
+  padding: 2.5%;
+  margin-bottom: 1rem;
+  grid-area: header;
+  color: var(--white-color, white);
+  background-color: var(--primary-color, #757575);
+}
+
+aside {
+  grid-area: aside;
+  padding: 2.5%;
+
+}
+
+main {
+  margin-block: 2.5%;
+  padding: 2.5%;
+  grid-area: main;
+}
+
+footer {
+  grid-area: footer;
 }
 
 form {
@@ -8,27 +70,54 @@ form {
   flex-direction: column;
 }
 
+form label {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+form textarea {
+  margin-top: 20px;
+  padding: 2.5%;
+  background-color: var(--light-color, #F5F5F5);
+  min-height: 300px;
+}
+
 form button[type="submit"] {
   align-self: flex-end;
-  margin-top: 10px ;
-  width: 50%;
+  margin-top: 10px;
+  width: 35%;
   height: 45px;
 }
 
 .result-container {
   display: flex;
-flex-direction: column;
+  flex-direction: column;
 }
 
 #result {
-background-color: lightgrey;
-min-height: 250px ;
-padding: 5%;
+  min-height: 250px;
+  padding: 2.5%;
+  background-color: var(--light-color, #F5F5F5);
 }
 
 .result-container button {
-align-self: flex-end;
-margin-top: 10px;
-width: 50%;
-height: 45px;
+  align-self: flex-end;
+  margin-top: 10px;
+  width: 35%;
+  max-width: 150px;
+  height: 45px;
+  color: var(--white-color, white);
+  background-color: var(--primary-color, #757575);
+}
+
+@media (min-width: 768px) {
+  body {
+    display: grid;
+    grid-template-columns: 65% 30%;
+    grid-gap: 2.5%;
+    grid-template-areas:
+      "header header"
+      "main aside"
+      "footer footer";
+  }
 }
