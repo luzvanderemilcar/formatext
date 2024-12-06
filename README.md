@@ -1,4 +1,4 @@
-#Text Reformatter
+# Text Reformatter
 -----
 
 This is a tool that is intended to help reformatting text according to the specific rules.
@@ -8,10 +8,10 @@ When those text are pasted inside a text-to-speech (TTS) application, the readin
 
 So, this tool adds so space, and other formats between specific items.
 
-##Support
+## Support
 
 Right now, JW Library panel "Parallel Translations" is supported.
 
-###JW Library 
+### JW Library 
 
 **JW Library** is an application made by Jehovah's witnesses to manage their publication (Ebook, Multimedia,...).

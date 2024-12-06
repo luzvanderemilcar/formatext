@@ -1,13 +1,15 @@
 :root {
-  --primary-color: #C100C1;
+  --primary-color: #23359A;
+  --bg-color: #E0E0E0;
   --white-color: white;
   --light-color: #F5F5F5;
-  --highlight-color: thistle;
+  --highlight-color: #BBDEFB;
 }
 
 body {
   padding: 0;
   margin: 0;
+  background-color: var(--bg-color, #E0E0E0);
   display: grid;
   grid-template-areas:
     "header"
@@ -21,11 +23,16 @@ h1,h2,h3,h4,h5 {
 }
 
 h2 {
-  background-color: var(--highlight-color, #E0E0E0);
+  color: var(--primary-color, #757575);
 }
 
 p {
   margin-inline: 0.75rem;
+}
+
+button {
+  border: none;
+  font-weight: 500
 }
 
 .container {
@@ -68,11 +75,6 @@ footer {
 form {
   display: flex;
   flex-direction: column;
-}
-
-form label {
-  margin-bottom: 10px;
-  font-weight: bold;
 }
 
 form textarea {
