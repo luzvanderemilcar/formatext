@@ -1,7 +1,10 @@
 import rearranger from '/rearranger.js';
-import copyContent from '/clipboard.js';
+import writeOnClipboard from '/clipboard.js';
 
 let processingText = "";
+
+// disable permissions for clipboard
+let enablePermissionsCheck = false;
 
 let formElement = document.getElementById("reformation");
 let textAreaElement = document.getElementById("original-text");
@@ -19,14 +22,18 @@ textAreaElement.addEventListener("blur", (e) => {
   resultElement.innerText = processingText;
 });
 
-copyButton.addEventListener("click", ()=>{
-  if (processingText) {
-  copyContent(processingText);
+resultElement.addEventListener("dblclick", handleCopy);
+
+copyButton.addEventListener("click", handleCopy)
+
+function handleCopy () {
+    if (processingText) {
+    writeOnClipboard(processingText, enablePermissionsCheck);
   } else {
     alert("Please type in text before copying");
     textAreaElement.focus()
   }
-})
+}
 
 function handleReformation(e) {
 e.preventDefault();

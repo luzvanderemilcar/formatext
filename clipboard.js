@@ -1,16 +1,26 @@
-export default async function copyContent(text) {
-  let accessGiven = navigator.permissions.query({ name: "write-on-clipboard" }).then((result) => {
-  if (result.state == "granted" || result.state == "prompt") return true;
-  return false
-});
+export default async function writeOnClipboard(text, enablePermissionsCheck) {
 
-if (accessGiven) {
-  try {
-    await navigator.clipboard.writeText(text);
-    alert('Content copied');
+  let permissionsGranted = await clipboardPermissionsGranted() 
+   
+   // grant permissions on permissions checking not enabled
+  if(!permissionsGranted && !enablePermissionsCheck) permissionsGranted= true;
+  
+  if (permissionsGranted && document.hasFocus()) {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert('Content copied');
 
-  } catch (err) {
-    console.error('Failed to copy: ', err);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
   }
 }
+
+async function clipboardPermissionsGranted() {
+
+  const writePermission = await navigator.permissions.query({ name: "clipboard-write" }).then(result => result.state);
+
+  const readPermission = await navigator.permissions.query({ name: "clipboard-read" }).then(result => result.state);
+  
+  return writePermission === "granted" && readPermission !== "denied";
 }
