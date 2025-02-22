@@ -1,16 +1,21 @@
 import rearranger from '/rearranger.js';
-import writeOnClipboard from '/clipboard.js';
+import { writeOnClipboard, readFromClipboard } from '/clipboard.js';
 
 let processingText = "";
 
-// disable permissions for clipboard
+// disable permissions check for clipboard
 let enablePermissionsCheck = false;
 
 let formElement = document.getElementById("reformation");
 let textAreaElement = document.getElementById("original-text");
 
-let resultElement = document.getElementById("result");
-let copyButton = document.getElementById("copy-clipboard");
+const resultElement = document.getElementById("result");
+const pasteButton = document.getElementById("paste-clipboard");
+const clearButton = document.getElementById("clear");
+const copyButton = document.getElementById("copy-clipboard");
+
+pasteButton.addEventListener("click", handlePaste);
+clearButton.addEventListener("click", handleClear);
 
 textAreaElement.addEventListener("focus", () => {
   resultElement.innerText = "";
@@ -26,8 +31,28 @@ resultElement.addEventListener("dblclick", handleCopy);
 
 copyButton.addEventListener("click", handleCopy)
 
-function handleCopy () {
-    if (processingText) {
+async function handlePaste() {
+  try {
+    readFromClipboard(enablePermissionsCheck).then(result => {
+    if (result) {
+    textAreaElement.focus();
+    textAreaElement.value += result;
+    textAreaElement.blur();
+    } else {
+      alert("No text in clipboard");
+    }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+function handleClear(param) {
+  textAreaElement.focus();
+textAreaElement.value = "";
+}
+
+function handleCopy() {
+  if (processingText) {
     writeOnClipboard(processingText, enablePermissionsCheck);
   } else {
     alert("Please type in text before copying");
@@ -35,15 +60,15 @@ function handleCopy () {
   }
 }
 
-function handleReformation(e) {
-e.preventDefault();
-
-let currentForm = e.target;
-
-let { originalText} = formElement.elements;
-
-let reformatted = rearranger(originalText?.value.trim());
-
-// set the reformatted text
-if (reformatted) resultElement.innerHTML = reformatted;
+function handleReformatting(e) {
+  e.preventDefault();
+  
+  let currentForm = e.target;
+  
+  let { originalText } = formElement.elements;
+  
+  let reformatted = rearranger(originalText?.value.trim());
+  
+  // set the reformatted text
+  if (reformatted) resultElement.innerHTML = reformatted;
 }

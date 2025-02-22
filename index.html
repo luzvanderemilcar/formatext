@@ -1,48 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/styles.css">
-  <title>JW Copy Reformatter</title>
+  <title>JW Text Reformatter</title>
 </head>
 
 <body>
   <header>
     <h1>Text Reformatter</h1>
+    <p>Paste and reformat your text at a glance</p>
   </header>
   <main id="main">
-    <div class="container">
-      <h2>Enter Your text</h2>
-      <form id="reformation">
-        <label for="original-text" aria-label="Type, or copy and paste text" hidden></label>
-        <textarea name="originalText" id="original-text" class="rounded-border" cols="30" placeholder="Type, or copy and paste text" autofocus></textarea>
-      </form>
-    </div>
-    <div class="container result-container ">
-      <h3>Preview</h3>
-      <div id="result" class="rounded-border">
+    <section id="text-proccess">
+      <fieldset>
+        <legend>Paste your content</legend>
+        <div class="container">
+          <!--form id="reformation"-->
+          <form>
+          <label for="original-text" aria-label="Type, or copy and paste text" hidden></label>
+          <textarea name="originalText" id="original-text" class="rounded-border" cols="30" placeholder="6These words that I am commanding..."></textarea>
+          </form>
+          <div>
+          <button id="paste-clipboard" class="rounded-border">Paste</button>
+          <button id="clear" class="rounded-border">Clear</button>
+          </div>
+        </div>
+      </fieldset>
+      
+      <fieldset>
+        <legend>Preview</legend>
+        <div class="container result-container ">
+          <div id="result" class="rounded-border">
+          </div>
+          <button id="copy-clipboard" class="rounded-border">Copy</button>
+        </div>
+      </fieldset>
+    </section>
+    <section id="how-to">
+      <div class="container">
+        <h2>Copy text from JW Library</h2>
+        <p>Copy Bible verse text from JW Library "Parallel translations" panel can result in a poor readable text. So, before passing the text inside any TTS program, this tool helps format it in a better way.</p>
       </div>
-      <button id="copy-clipboard" class="rounded-border">Copy</button>
-    </div>
+      <div class="container">
+        <h3>How to use</h3>
+        <ol>
+          <li>Type into the textbox what you want to reformat or paste it using the <strong>Paste</strong> button</li>
+          <li>Preview it in the section below</li>
+          <li>Tap the <strong>Clear</strong> button to empty the textbox</li>
+          <li>Double tap the preview text to copy it into your clipboard, or tap the <strong>Copy</strong> button at the very bottom of the preview</li>
+        </ol>
+      </div>
+      <hr />
+      <div class="container">
+        <h3>Note</h3>
+        <p>Check whether your browser has clipboard read and write permissions, if any problem copying or pasting content</p>
+      </div>
+    </section>
   </main>
-  <aside id="how-to">
-    <div class="container">
-      <h2>Copy text from JW Library</h2>
-      <p>Copy Bible verse text from JW Library "Parallel translations" panel can result in a poor readable text. So, before passing the text inside any TTS program, this tool helps format it in a better way.</p>
-    </div>
-    <hr>
-    <div class="container">
-      <h3>How to use</h3>
-      <p>Just copy and paste the text inside the box. After that, Go to the preview to see the result format</p>
-      <p>Click the button <strong>Copy to clipboard</strong> to copy the text to the clipboard.</p>
-    </div>
-  </aside>
   <footer>
-
+    <h6>Powered by Luzvander EMILCAR</h6>
   </footer>
-
+  
   <script src="/app.js" type="module"></script>
 </body>
 
