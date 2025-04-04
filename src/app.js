@@ -1,5 +1,5 @@
-import rearranger from '/rearranger.js';
-import { writeOnClipboard, readFromClipboard } from '/clipboard.js';
+import rearranger from './rearranger.js';
+import { writeOnClipboard, readFromClipboard } from './clipboard.js';
 
 let processingText = "";
 
