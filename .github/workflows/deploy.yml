@@ -30,3 +30,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist  # Adjust this to your build output directory
           publish_branch: gh-pages
+          force_orphan: true  # Add this line to handle creating the branch if it doesn't exist
