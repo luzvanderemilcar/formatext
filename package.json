@@ -2,15 +2,13 @@
   "name": "formatext",
   "version": "1.0.0",
   "description": "A repository that contains file for a text reformatter app",
-  "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.js",
-    "build": "parcel build src/index.js --dist-dir dist"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --dist-dir dist"
   },
   "author": "luzvanderemilcar",
   "license": "MIT",
   "devDependencies": {
     "parcel": "^2.0.0"
-  },
-  "type": "module"
+  }
 }
