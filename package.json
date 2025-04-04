@@ -2,7 +2,7 @@
   "name": "formatext",
   "version": "1.0.0",
   "description": "A repository that contains file for a text reformatter app",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --dist-dir dist"
