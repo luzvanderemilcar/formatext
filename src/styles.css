@@ -18,7 +18,12 @@ section {
   margin: 5px;
 }
 
-h1,
+h1 {
+  padding-left: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
 h3,
 h4,
 h5 {
@@ -35,8 +40,8 @@ p {
 }
 
 button {
-  min-width: 100px;
-  height: 50px;
+  min-width: 90px;
+  height: 45px;
   margin-top: 10px;
   border: none;
   font-weight: 500
@@ -82,6 +87,12 @@ form textarea {
   padding: 2.5%;
   background-color: var(--light-color, #F5F5F5);
   min-height: 300px;
+}
+
+.controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 button#paste-clipboard {
