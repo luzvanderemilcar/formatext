@@ -1,10 +1,11 @@
-import rearranger from './rearranger.js';
+import {TextReverter} from './rearranger.js';
 import { writeOnClipboard, readFromClipboard } from './clipboard.js';
 
-let processingText = "";
 
 // disable permissions check for clipboard
 let enablePermissionsCheck = false;
+
+let textProcessorAlgorithmSelect = document.getElementById("algorithm");
 
 let formElement = document.getElementById("reformation");
 let textAreaElement = document.getElementById("original-text");
@@ -13,18 +14,26 @@ const resultElement = document.getElementById("result");
 const pasteButton = document.getElementById("paste-clipboard");
 const clearButton = document.getElementById("clear");
 const copyButton = document.getElementById("copy-clipboard");
+textProcessorAlgorithmSelect.addEventListener("change", setCurrentTextReverter)
+
+function setCurrentTextReverter(e) {
+  let reverterAlgorithm = e.target.value;
+  TextReverter.setCurrent(reverterAlgorithm);
+  let textValue = getInputValue();
+    if (textValue) showResult(textValue)
+  
+}
 
 pasteButton.addEventListener("click", handlePaste);
 clearButton.addEventListener("click", handleClear);
 
 textAreaElement.addEventListener("focus", () => {
-  resultElement.innerText = "";
+  setResultValue("");
 });
 
 textAreaElement.addEventListener("blur", (e) => {
   let textValue = e.target.value;
-  processingText = rearranger(textValue);
-  resultElement.innerText = processingText;
+  showResult(textValue);
 });
 
 resultElement.addEventListener("dblclick", handleCopy);
@@ -36,7 +45,7 @@ async function handlePaste() {
     readFromClipboard(enablePermissionsCheck).then(result => {
     if (result) {
     textAreaElement.focus();
-    textAreaElement.value += result;
+    setInputValue(getInputValue() + result);
     textAreaElement.blur();
     } else {
       alert("No text in clipboard");
@@ -46,11 +55,14 @@ async function handlePaste() {
     console.error(e);
   }
 }
-function handleClear(param) {
-  textAreaElement.focus();
-textAreaElement.value = "";
+
+// clear the textarea 
+function handleClear() {
+  textAreaElement.focus(); 
+  setInputValue("");
 }
 
+// copy the content of the processed text in the clipboard 
 function handleCopy() {
   if (processingText) {
     writeOnClipboard(processingText, enablePermissionsCheck);
@@ -67,8 +79,30 @@ function handleReformatting(e) {
   
   let { originalText } = formElement.elements;
   
-  let reformatted = rearranger(originalText?.value.trim());
+  let reformatted = TextReverter.getCurrent().revert(originalText?.value.trim());
   
   // set the reformatted text
-  if (reformatted) resultElement.innerHTML = reformatted;
+  if (reformatted) setResultValue(reformatted);
+}
+
+
+function showResult(textValue) {
+  let processedText = TextReverter.getCurrent().revert(textValue);
+  setResultValue(processedText);
+}
+
+function getInputValue() {
+  return textAreaElement.value;
+}
+
+function setInputValue(textValue) {
+  textAreaElement.value = textValue;
+}
+
+function getResultValue() {
+  return resultElement.textContent;
+}
+
+function setResultValue(textValue) {
+  resultElement.textContent = textValue;
 }

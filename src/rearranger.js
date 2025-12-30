@@ -1,8 +1,148 @@
+class TextReverter {
+  static #reverters = [];
+  static #current;
+
+  #name;
+  #reverterFunction;
+  
+  
+  constructor (name, isCurrentTextReverter=false) {
+    this.#name = name;
+    // set current reverter
+    if (TextReverter.#reverters.length == 0 || isCurrentTextReverter) TextReverter.#current = this;
+    TextReverter.#reverters.push(this);
+  }
+  
+  static getReverters() {
+    return TextReverter.#reverters;
+  }
+  
+  static getReverter(name) {
+    let reverter = TextReverter.#reverters.find(reverter => new RegExp(name, "i").test(reverter.getName()));
+    
+    return reverter;
+  }
+  
+  static setCurrent(name) {
+    TextReverter.#current = TextReverter.getReverter(name);
+  }
+  
+  static getCurrent() {
+    return TextReverter.#current;
+  }
+  
+  getName() {
+    return this.#name;
+  }
+  
+  setName(newName) {
+    this.#name = newName;
+  }
+  
+  setReverterFunction(functionName) {
+    this.#reverterFunction = functionName
+  }
+  
+  getReverterFunction() {
+    return this.#reverterFunction;
+  }
+  
+  revert(text) {
+    return this.#reverterFunction(text)
+  }
+}
+
+let whatsapp = new TextReverter("whatsapp");
+
+whatsapp.setReverterFunction(function (text) {
+  
+  let processedText = text;
+  
+  let doubleSidedMarkList = ["_", "~", "*", "`", "-"];
+  let singleSidedMarkList = [">", "-"];
+  
+  // for doubleSided symbols 
+  if (doubleSidedMarkList?.length > 0) {
+    processedText = clearDoubleSidedMarkup(processedText, doubleSidedMarkList, 3);
+  }
+  
+  // for singleSided symbol followed by space
+  
+  if (singleSidedMarkList?.length > 0) {
+    
+    processedText = clearSingleSidedMarkup(processedText, singleSidedMarkList, true)
+    
+  }
+  return processedText;
+});
+
+let jwlibrary = new TextReverter("jwlibrary", true);
+
+jwlibrary.setReverterFunction(rearrangeVerse);
+
+console.log(whatsapp.revert("> Appel paye \n*Replique*"));
+
+let markdown = new TextReverter("markdown");
+
+console.log(TextReverter.getReverter("markdown").getName());
+/**
+ * @param {string} text string to unmark,
+ * @param {Array} singleSidedMarkList array of single mark to take off
+ * @param {boolean} followedBySpace boolean that precise whether the given mark is followed by space, default to false
+ * @return {string} string processed and unmarked
+ */
+function clearSingleSidedMarkup(text, singleSidedMarkList, followedBySpace = false) {
+  let escapedSymbolString = escapeRegExp(singleSidedMarkList.join(""));
+  
+  // regular expression qui traitent des caractères singuliers et des espaces qui pourraient les suivre
+  let singleSidedMarkRegExp = new RegExp(`(?<markupSymbol>[${escapedSymbolString}]+${followedBySpace ? "[ ]+)" : "(?=[^ ]+))"}(?<markedText>[^${escapedSymbolString}]+)`, "g");
+  
+  return text.replace(singleSidedMarkRegExp, ((match, markupSymbol, markedText, index, groups) => {
+    
+    //console.log("Match : " + match, "\nMarkup symbol : " + markupSymbol, "\nMarked Text : " + markedText, "\nIndex : " + index, "\nGroups : " + groups)
+    return `${markedText}`
+  }));
+}
+
+/**
+ * clear marker that surrounds text blocks
+ * @param {string} text the text that is to unmark
+ * @param {Array} doubleSidedMarkList a list of the character that are to be removed from the text
+ * @param {number} turnCount the number of turn to repeat the process to handle nested markup
+ * @return {string} the process text with markups removed
+ */
+function clearDoubleSidedMarkup(text, doubleSidedMarkList, turnCount = 1) {
+  
+  let processedText = text;
+  let escapedSymbolString = escapeRegExp(doubleSidedMarkList.join(""));
+  
+  let doubleSidedMarkRegExp = new RegExp(`(?<markupSymbol>[${escapedSymbolString}]+)(?<markedText>[^${escapedSymbolString}]+)\\k<markupSymbol>`, "g");
+  
+  do {
+    processedText = processedText.replace(doubleSidedMarkRegExp, ((match, markupSymbol, markedText, index, groups) => {
+      
+      // console.log("Match : " + match, "\nMarkup symbol : " + markupSymbol, "\nMarked Text : " + markedText, "\nIndex : " + index, "\nGroups : " + groups)
+      return `${markedText}`
+    }));
+    turnCount--;
+  } while (turnCount > 0)
+  return processedText;
+}
+
+//console.log(clearDoubleSidedMarkup(">*~Eroky ejxh~* ```Martin``* ~kdvdk~", ["*", "~", "`"],2))
+//console.log(clearSingleSidedMarkup(">- *Eroky ejxh* ```Martin``* ~kdvdk~ - ksjsvv", ["-", ">"]))
+
+
 //Rearrange the text of a Bible verse copied from Jw Library
 
-export default function rearrangeVerse(text) {
-return text.replace(/(?<versetNumber>\d+)/g, ((match, verseNumber, index, groups) => {
-  return ` ${verseNumber}. `
-  })
-  );
-  }
+ function rearrangeVerse(text) {
+  return text.replace(/(?<versetNumber>\d+)/g, ((match, verseNumber, index, groups) => {
+    return ` ${verseNumber}. `
+  }));
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|\-[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+export {TextReverter};

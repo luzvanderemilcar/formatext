@@ -89,6 +89,11 @@ form textarea {
   min-height: 300px;
 }
 
+.algorithm-select-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .controls {
   display: flex;
   justify-content: flex-end;
