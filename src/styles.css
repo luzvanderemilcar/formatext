@@ -109,11 +109,16 @@ button#clear {
   background-color: var(--danger-color, darkred);
 }
 
-div#result {
+#result {
   height: 300px;
-  overflow-y: scroll;
+  width: calc(100%-5%);
+  overflow: scroll;
   padding: 2.5%;
   background-color: var(--light-color, #F5F5F5);
+  font-family: monospace;
+  white-space: pre-wrap;
+  max-height: 500px;
+  line-height: 1.4
 }
 
 button#copy-clipboard {

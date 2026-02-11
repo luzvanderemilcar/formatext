@@ -84,6 +84,28 @@ console.log(whatsapp.revert("> Appel paye \n*Replique*"));
 
 let markdown = new TextReverter("markdown");
 
+
+let smplToM3u = new TextReverter("smpltom3u");
+
+smplToM3u.setReverterFunction(function (smplJson) {
+  const members = JSON.parse(smplJson).members;
+  
+  let m3uContent = '#EXTM3U\n#PLAYLIST:' + JSON.parse(smplJson).name + '\n';
+  
+  // Sort by order ascending (0 first)
+  members.sort((a, b) => a.order - b.order);
+  
+  members.forEach(member => {
+    const filename = member.info.replace(/^\/storage\/emulated\/0\/Music\//, '');
+    const title = member.title;
+    const artist = member.artist;
+    
+    m3uContent += `#EXTINF:0,${title} - ${artist}\n${filename}\n`;
+  });
+  
+  return m3uContent;
+});
+
 console.log(TextReverter.getReverter("markdown").getName());
 /**
  * @param {string} text string to unmark,

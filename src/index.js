@@ -7,6 +7,8 @@ let enablePermissionsCheck = false;
 
 let textProcessorAlgorithmSelect = document.getElementById("algorithm");
 
+let resultText;
+
 let formElement = document.getElementById("reformation");
 let textAreaElement = document.getElementById("original-text");
 
@@ -64,8 +66,8 @@ function handleClear() {
 
 // copy the content of the processed text in the clipboard 
 function handleCopy() {
-  if (processingText) {
-    writeOnClipboard(processingText, enablePermissionsCheck);
+  if (resultText) {
+    writeOnClipboard(resultText, enablePermissionsCheck);
   } else {
     alert("Please type in text before copying");
     textAreaElement.focus()
@@ -100,9 +102,15 @@ function setInputValue(textValue) {
 }
 
 function getResultValue() {
-  return resultElement.textContent;
+  return resultText;
 }
 
 function setResultValue(textValue) {
-  resultElement.textContent = textValue;
+  resultElement.innerHTML = textToDivHtml(textValue);
+  resultText = textValue;
+}
+
+function textToDivHtml(textContent) {
+  // Convert newlines to <br> tags for HTML display
+  return textContent.replace(/\n/g, '<br>');
 }
