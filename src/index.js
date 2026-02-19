@@ -87,6 +87,17 @@ function handleReformatting(e) {
   if (reformatted) setResultValue(reformatted);
 }
 
+function createReverter(name, reverterFunction, asCurrent=false) {
+  let reverter = new TextReverter(name);
+  reverter.setReverterFunction(reverterFunction);
+  
+  createNewReverterOption(name);
+}
+
+function createNewReverterOption({option, value}, selectElement) {
+  // 
+  
+}
 
 function showResult(textValue) {
   let processedText = TextReverter.getCurrent().revert(textValue);

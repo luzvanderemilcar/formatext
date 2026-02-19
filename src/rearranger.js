@@ -96,7 +96,7 @@ smplToM3u.setReverterFunction(function (smplJson) {
   members.sort((a, b) => a.order - b.order);
   
   members.forEach(member => {
-    const filename = member.info.replace(/^\/storage\/emulated\/0\/Music\//, '');
+    const filename = member.info.replace(/^.*[\\\/]/, '');
     const title = member.title;
     const artist = member.artist;
     
@@ -106,7 +106,6 @@ smplToM3u.setReverterFunction(function (smplJson) {
   return m3uContent;
 });
 
-console.log(TextReverter.getReverter("markdown").getName());
 /**
  * @param {string} text string to unmark,
  * @param {Array} singleSidedMarkList array of single mark to take off
