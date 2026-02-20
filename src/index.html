@@ -29,12 +29,19 @@
         <div class="container">
           <!--form id="reformation"-->
           <form>
+          <button id="import-on" type="button">Import a file</button>
+          <div id="file-read-container"class="input-group hidden">
+            <input type="file" name="" id="file1" value="" />
+            <button id="read-file1"class="btn-primary rounded-border" type="button" disabled>Read content</button>
+          </div>
+
+          
           <label for="original-text" aria-label="Type, or copy and paste text" hidden></label>
           <textarea name="originalText" id="original-text" class="rounded-border" cols="30" placeholder="6These words that I am commanding..."></textarea>
           </form>
           <div class="controls">
           <button id="paste-clipboard" class="rounded-border">Paste</button>
-          <button id="clear" class="rounded-border">Clear</button>
+          <button id="clear" class="btn-danger rounded-border">Clear</button>
           </div>
         </div>
       </fieldset>
@@ -42,10 +49,10 @@
       <fieldset>
         <legend>Preview</legend>
         <div class="container result-container ">
-          <pre id="result" class="rounded-border">
+          <div id="result" class="rounded-border">
           </div>
           <div class="controls">
-            <button id="copy-clipboard" class="rounded-border">Copy</button>
+            <button id="copy-clipboard" class="btn-primary rounded-border">Copy</button>
           </div>
         </div>
       </fieldset>

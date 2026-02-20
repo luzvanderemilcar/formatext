@@ -1,3 +1,4 @@
+import {readFile} from '/fileReader.js';
 import {TextReverter} from './rearranger.js';
 import { writeOnClipboard, readFromClipboard } from './clipboard.js';
 
@@ -9,7 +10,14 @@ let textProcessorAlgorithmSelect = document.getElementById("algorithm");
 
 let resultText;
 
+
 let formElement = document.getElementById("reformation");
+let fileReadContainer = document.getElementById("file-read-container");
+let fileImportOnButton = document.getElementById("import-on");
+let fileInput = document.getElementById("file1");
+let readFileButton = document.getElementById("read-file1");
+
+// 
 let textAreaElement = document.getElementById("original-text");
 
 const resultElement = document.getElementById("result");
@@ -22,9 +30,26 @@ function setCurrentTextReverter(e) {
   let reverterAlgorithm = e.target.value;
   TextReverter.setCurrent(reverterAlgorithm);
   let textValue = getInputValue();
-    if (textValue) showResult(textValue)
+    if (textValue) showProcessResult(textValue)
   
 }
+
+// Events listeners
+fileImportOnButton.addEventListener("click", function (e) {
+  fileReadContainer.classList.remove("hidden");
+  e.target.classList.add("hidden");
+});
+
+fileInput.addEventListener('change', function() {
+readFileButton.removeAttribute("disabled");
+});
+
+readFileButton.addEventListener('click', function() {
+  const file = fileInput.files[0];
+  if (file) {
+    readFile(file, processConversion);
+  }
+});
 
 pasteButton.addEventListener("click", handlePaste);
 clearButton.addEventListener("click", handleClear);
@@ -33,9 +58,13 @@ textAreaElement.addEventListener("focus", () => {
   setResultValue("");
 });
 
+textAreaElement.addEventListener("change", () => {
+  show(fileReadContainer)
+});
+
 textAreaElement.addEventListener("blur", (e) => {
   let textValue = e.target.value;
-  showResult(textValue);
+  showProcessResult(textValue);
 });
 
 resultElement.addEventListener("dblclick", handleCopy);
@@ -99,7 +128,7 @@ function createNewReverterOption({option, value}, selectElement) {
   
 }
 
-function showResult(textValue) {
+function showProcessResult(textValue) {
   let processedText = TextReverter.getCurrent().revert(textValue);
   setResultValue(processedText);
 }
@@ -121,7 +150,23 @@ function setResultValue(textValue) {
   resultText = textValue;
 }
 
+function processConversion(inputValue) {
+  setInputValue(inputValue);
+  showProcessResult(getInputValue());
+}
+
 function textToDivHtml(textContent) {
   // Convert newlines to <br> tags for HTML display
   return textContent.replace(/\n/g, '<br>');
+}
+
+/**
+ * @param {HTMLElement} element element to show
+ */
+function show(element) {
+  if (element.classList.has("hidden")) element.classList.remove("hidden")
+}
+
+function hide(element) {
+  if (!element.classList.has("hidden")) element.classList.add("hidden")
 }
