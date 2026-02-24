@@ -89,11 +89,9 @@ let jwlibrary = new TextReverter("jwlibrary", true);
 
 jwlibrary.setReverterFunction(rearrangeVerse);
 
-console.log(whatsapp.revert("> Appel paye \n*Replique*"));
-
 let markdown = new TextReverter("markdown");
 
-
+// smpl converter
 let smplToM3u = new TextReverter("smpltom3u");
 
 smplToM3u.setReverterFunction(function (smplJson) {
