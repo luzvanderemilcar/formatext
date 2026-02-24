@@ -2,6 +2,7 @@ import {readFile} from '/fileReader.js';
 import {TextReverter} from './rearranger.js';
 import { writeOnClipboard, readFromClipboard } from './clipboard.js';
 
+window.onload = function() {
 
 // disable permissions check for clipboard
 let enablePermissionsCheck = false;
@@ -29,6 +30,12 @@ textProcessorAlgorithmSelect.addEventListener("change", setCurrentTextReverter)
 function setCurrentTextReverter(e) {
   let reverterAlgorithm = e.target.value;
   TextReverter.setCurrent(reverterAlgorithm);
+  let allowedFileSourceExtensions = TextReverter.getCurrent().getAllowedFileSourceExtensions();
+  
+  if (allowedFileSourceExtensions) {
+    fileInput.setAttribute("accept", allowedFileSourceExtensions.join(", "));
+  }
+  
   let textValue = getInputValue();
     if (textValue) showProcessResult(textValue)
   
@@ -170,3 +177,4 @@ function show(element) {
 function hide(element) {
   if (!element.classList.has("hidden")) element.classList.add("hidden")
 }
+};

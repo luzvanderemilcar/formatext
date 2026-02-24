@@ -4,6 +4,7 @@ class TextReverter {
 
   #name;
   #reverterFunction;
+  #allowedFileSourceExtensions = [];
   
   
   constructor (name, isCurrentTextReverter=false) {
@@ -37,6 +38,14 @@ class TextReverter {
   
   setName(newName) {
     this.#name = newName;
+  }
+  
+  getAllowedFileSourceExtensions() {
+    return this.#allowedFileSourceExtensions;
+  }
+  
+  setAllowedFileSourceExtensions(extensionList) {
+    if (Array.isArray(extensionList) && extensionList.length > 0) this.#allowedFileSourceExtensions = extensionList;
   }
   
   setReverterFunction(functionName) {
@@ -105,6 +114,8 @@ smplToM3u.setReverterFunction(function (smplJson) {
   
   return m3uContent;
 });
+
+smplToM3u.setAllowedFileSourceExtensions([".smpl"]);
 
 /**
  * @param {string} text string to unmark,
