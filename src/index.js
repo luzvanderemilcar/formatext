@@ -1,15 +1,25 @@
-import {readFile} from '/fileReader.js';
-import {TextReverter} from './rearranger.js';
+import { readFile } from '/fileReader.js';
+import { TextReverter } from './rearranger.js';
 import { writeOnClipboard, readFromClipboard } from './clipboard.js';
 
-window.onload = function() {
+  
+  let localStorageIsAvailable;
 
 // disable permissions check for clipboard
 let enablePermissionsCheck = false;
 
-let textProcessorAlgorithmSelect = document.getElementById("algorithm");
+if (typeof(Storage) !== "undefined") {
+  // localStorage is supported. Use the API methods here.
+  localStorageIsAvailable = true;
+} else {
+  // No web storage support.
+  localStorageIsAvailable = false;
+}
 
 let resultText;
+
+// select elements
+let textProcessorAlgorithmSelect = document.getElementById("algorithm");
 
 
 let formElement = document.getElementById("reformation");
@@ -25,156 +35,223 @@ const resultElement = document.getElementById("result");
 const pasteButton = document.getElementById("paste-clipboard");
 const clearButton = document.getElementById("clear");
 const copyButton = document.getElementById("copy-clipboard");
-textProcessorAlgorithmSelect.addEventListener("change", setCurrentTextReverter)
 
-function setCurrentTextReverter(e) {
-  let reverterAlgorithm = e.target.value;
-  TextReverter.setCurrent(reverterAlgorithm);
-  let allowedFileSourceExtensions = TextReverter.getCurrent().getAllowedFileSourceExtensions();
+  // change the current algorithm
+  if (localStorageIsAvailable) {
+  // use possible stored algorithm type for the reverter
+  let currentReverter = localStorage.getItem("currentReverter");
   
-  if (allowedFileSourceExtensions) {
-    fileInput.setAttribute("accept", allowedFileSourceExtensions.join(", "));
+   setInputValue(localStorage.getItem("textValue"));
+  
+  if (currentReverter) {
+    setCurrentReverter(currentReverter);
+    textProcessorAlgorithmSelect.value = currentReverter;
   }
-  
-  let textValue = getInputValue();
-    if (textValue) showProcessResult(textValue)
-  
 }
 
-// Events listeners
-fileImportOnButton.addEventListener("click", function (e) {
-  fileReadContainer.classList.remove("hidden");
-  e.target.classList.add("hidden");
-});
-
-fileInput.addEventListener('change', function() {
-readFileButton.removeAttribute("disabled");
-});
-
-readFileButton.addEventListener('click', function() {
-  const file = fileInput.files[0];
-  if (file) {
-    readFile(file, processConversion);
+  textProcessorAlgorithmSelect.addEventListener("change", changeCurrentTextReverter);
+  
+  function changeCurrentTextReverter(e) {
+    let reverterAlgorithm = e.target.value;
+    
+    // change current reverter
+    setCurrentReverter(reverterAlgorithm);
   }
-});
-
-pasteButton.addEventListener("click", handlePaste);
-clearButton.addEventListener("click", handleClear);
-
-textAreaElement.addEventListener("focus", () => {
-  setResultValue("");
-});
-
-textAreaElement.addEventListener("change", () => {
-  show(fileReadContainer)
-});
-
-textAreaElement.addEventListener("blur", (e) => {
-  let textValue = e.target.value;
-  showProcessResult(textValue);
-});
-
-resultElement.addEventListener("dblclick", handleCopy);
-
-copyButton.addEventListener("click", handleCopy)
-
-async function handlePaste() {
-  try {
-    readFromClipboard(enablePermissionsCheck).then(result => {
-    if (result) {
-    textAreaElement.focus();
-    setInputValue(getInputValue() + result);
-    textAreaElement.blur();
+  
+  function setCurrentReverter(reverter) {
+    TextReverter.setCurrent(reverter);
+    
+    // save into local storage
+    if (localStorageIsAvailable) localStorage.setItem("currentReverter", reverter);
+    
+    let allowedFileSourceExtensions = TextReverter.getCurrent().getAllowedFileSourceExtensions();
+    
+    // allowed file source extensions are specified
+    if (allowedFileSourceExtensions) {
+      fileInput.setAttribute("accept", allowedFileSourceExtensions.join(", "));
     } else {
-      alert("No text in clipboard");
+      
+      if (fileInput.hasAttribute("accept")) fileInput.removeAttribute("accept")
     }
-    });
-  } catch (e) {
-    console.error(e);
+    
+    // get text to process
+    let textValue = getInputValue();
+    
+    // process reversion
+    if (textValue && showProcessResult) showProcessResult(textValue)
   }
-}
-
-// clear the textarea 
-function handleClear() {
-  textAreaElement.focus(); 
-  setInputValue("");
-}
-
-// copy the content of the processed text in the clipboard 
-function handleCopy() {
-  if (resultText) {
-    writeOnClipboard(resultText, enablePermissionsCheck);
-  } else {
-    alert("Please type in text before copying");
-    textAreaElement.focus()
+  
+  
+  // Events listeners
+  fileImportOnButton.addEventListener("click", function(e) {
+    fileReadContainer.classList.remove("hidden");
+    e.target.classList.add("hidden");
+  });
+  
+  fileInput.addEventListener('change', function() {
+    readFileButton.removeAttribute("disabled");
+  });
+  
+  readFileButton.addEventListener('click', function() {
+    const file = fileInput.files[0];
+    if (file) {
+      readFile(file, processConversion);
+    }
+  });
+  
+  pasteButton.addEventListener("click", handlePaste);
+  clearButton.addEventListener("click", handleClear);
+  
+  textAreaElement.addEventListener("focus", () => {
+    setResultValue("");
+  });
+  
+  textAreaElement.addEventListener("change", (e) => {
+    
+    let textValue = e.target.value;
+    
+    if (localStorageIsAvailable) localStorage.setItem("textValue", textValue);
+  });
+  
+  textAreaElement.addEventListener("input", function() {
+    if (fileReadContainer) hide(fileReadContainer);
+  });
+  
+  textAreaElement.addEventListener("blur", (e) => {
+    let textValue = e.target.value;
+   showProcessResult(textValue);
+   show(fileImportOnButton);
+  });
+  
+  resultElement.addEventListener("dblclick", handleCopy);
+  
+  copyButton.addEventListener("click", handleCopy)
+  
+  async function handlePaste() {
+    try {
+      readFromClipboard(enablePermissionsCheck).then(result => {
+        if (result) {
+          textAreaElement.focus();
+          setInputValue(getInputValue() + result);
+          textAreaElement.blur();
+        } else {
+          alert("No text in clipboard");
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
-}
-
-function handleReformatting(e) {
-  e.preventDefault();
   
-  let currentForm = e.target;
+  // clear the textarea 
+  function handleClear() {
+    textAreaElement.focus();
+    setInputValue("");
+  }
   
-  let { originalText } = formElement.elements;
+  // copy the content of the processed text in the clipboard 
+  function handleCopy() {
+    if (resultText) {
+      writeOnClipboard(resultText, enablePermissionsCheck);
+    } else {
+      alert("Please type in text before copying");
+      textAreaElement.focus()
+    }
+  }
   
-  let reformatted = TextReverter.getCurrent().revert(originalText?.value.trim());
+  function handleReformatting(e) {
+    e.preventDefault();
+    
+    let currentForm = e.target;
+    
+    let { originalText } = formElement.elements;
+    
+    let reformatted = TextReverter.getCurrent().revert(originalText?.value.trim());
+    
+    // set the reformatted text
+    if (reformatted) setResultValue(reformatted);
+  }
   
-  // set the reformatted text
-  if (reformatted) setResultValue(reformatted);
-}
-
-function createReverter(name, reverterFunction, asCurrent=false) {
-  let reverter = new TextReverter(name);
-  reverter.setReverterFunction(reverterFunction);
+  /*function createReverter(name, reverterFunction, asCurrent = false) {
+    let reverter = new TextReverter(name, asCurrent);
+    reverter.setReverterFunction(reverterFunction);
+    
+    createNewReverterOption(name);
+  }
   
-  createNewReverterOption(name);
-}
-
-function createNewReverterOption({option, value}, selectElement) {
-  // 
+  function createNewReverterOption({ option, value }, selectElement) {
+    // 
+    
+  }
+  */
   
-}
+  /** Convert the textValue into another format
+   * @param {string} textValue value entered to be processed
+   */
+  function showProcessResult(textValue) {
+    
+    try {
+      let processedText = TextReverter.getCurrent().revert(textValue);
 
-function showProcessResult(textValue) {
-  let processedText = TextReverter.getCurrent().revert(textValue);
-  setResultValue(processedText);
-}
-
-function getInputValue() {
-  return textAreaElement.value;
-}
-
-function setInputValue(textValue) {
-  textAreaElement.value = textValue;
-}
-
-function getResultValue() {
-  return resultText;
-}
-
-function setResultValue(textValue) {
-  resultElement.innerHTML = textToDivHtml(textValue);
-  resultText = textValue;
-}
-
-function processConversion(inputValue) {
-  setInputValue(inputValue);
-  showProcessResult(getInputValue());
-}
-
-function textToDivHtml(textContent) {
-  // Convert newlines to <br> tags for HTML display
-  return textContent.replace(/\n/g, '<br>');
-}
-
-/**
- * @param {HTMLElement} element element to show
- */
-function show(element) {
-  if (element.classList.has("hidden")) element.classList.remove("hidden")
-}
-
-function hide(element) {
-  if (!element.classList.has("hidden")) element.classList.add("hidden")
-}
-};
+    setResultValue(processedText);
+    } catch (e) {
+      if (/(Syntax|Type)Error/i.test(e.stack)) {
+        alert(`Le contenu du texte entrée est different type attendu.`);
+      } else {
+      console.log(e);
+      }
+      // clear 
+      setResultValue("");
+    }
+  }
+  
+  function getInputValue() {
+    return textAreaElement.value;
+  }
+  
+  function setInputValue(textValue) {
+    textAreaElement.value = textValue;
+  }
+  
+  // get the value of the result *string* format
+  /**
+   * @return {string} text formatted
+   */
+  function getResultValue() {
+    return resultText;
+  }
+  
+  // set the value of the result
+  function setResultValue(textValue) {
+    resultElement.innerHTML = textToDivHtml(textValue);
+    resultText = textValue;
+    if (localStorageIsAvailable) localStorage.setItem("resultText", textValue);
+  }
+  
+  function processConversion(inputValue) {
+    setInputValue(inputValue);
+    showProcessResult(inputValue);
+  }
+  
+  // show result from text format to html corresponding element
+  /**
+   * @param {string} textContent text to convert into html conponent
+   * @return {TextNode} html text node
+   */
+  function textToDivHtml(textContent) {
+    // Convert newlines to <br> tags for HTML display
+    return textContent.replace(/\n/g, '<br>');
+  }
+  
+  /**
+   * @param {HTMLElement} element element to show
+   */
+  function show(element) {
+    if (element.classList.contains("hidden")) element.classList.remove("hidden")
+  }
+    /**
+   * @param {HTMLElement} element element to show
+   */
+  function hide(element) {
+    if (!element.classList.contains("hidden")) element.classList.add("hidden")
+  }

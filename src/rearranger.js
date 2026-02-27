@@ -57,7 +57,7 @@ class TextReverter {
   }
   
   revert(text) {
-    return this.#reverterFunction(text)
+    return this.getReverterFunction()(text)
   }
 }
 
