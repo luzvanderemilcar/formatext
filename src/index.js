@@ -110,7 +110,7 @@ const copyButton = document.getElementById("copy-clipboard");
     
     let textValue = e.target.value;
     
-    if (localStorageIsAvailable) localStorage.setItem("textValue", textValue);
+   // if (localStorageIsAvailable) localStorage.setItem("textValue", textValue);
   });
   
   textAreaElement.addEventListener("input", function() {
@@ -194,6 +194,8 @@ const copyButton = document.getElementById("copy-clipboard");
       let processedText = TextReverter.getCurrent().revert(textValue);
 
     setResultValue(processedText);
+
+    if (localStorageIsAvailable) localStorage.setItem("textValue", textValue);
     } catch (e) {
       if (/(Syntax|Type)Error/i.test(e.stack)) {
         alert(`Le contenu du texte entrée est different type attendu.`);
