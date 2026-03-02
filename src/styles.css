@@ -117,6 +117,7 @@ button.btn-danger {
   height: 300px;
   width: calc(100%-5%);
   overflow: scroll;
+  overflow-wrap: anywhere;
   padding: 2.5%;
   background-color: var(--light-color, #F5F5F5);
   font-family: monospace;
